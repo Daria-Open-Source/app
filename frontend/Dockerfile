@@ -7,35 +7,35 @@ RUN apk add --no-cache libc6-compat
 
 #Set working directory
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm install
+COPY . .
 RUN npm run build
 
-#Install only production dependencies and copy built files
-FROM node:24-alpine as installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
-RUN apk add --no-cache openssl
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
-RUN npm ci --omit=dev
-RUN npm run prisma:generate
-
-#Final stage for running the application
+#For running the application
 FROM node:24-alpine AS runner
 RUN apk update
 RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache openssl
+
+#Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nodejs
+
 WORKDIR /app
-#Dont run production as root
-RUN addgroup --system --gid 1001 expressjs
-RUN adduser --system --uid 1001 expressjs
-USER expressjs
-COPY --from=installer /app .
 
+#Copy files with proper ownership
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/vite.config.ts ./vite.config.ts
+
+
+#Create .vite directory with proper permissions
+RUN mkdir -p /app/.vite && chown -R nodejs:nodejs /app
+
+USER nodejs
+
+EXPOSE 3000
 CMD ["npm", "run", "docker-start"]
-
-
 
