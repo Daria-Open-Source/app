@@ -1,3 +1,4 @@
 # gitignore
 .env
 .gcloud_config/
+node_modules/
