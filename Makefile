@@ -35,7 +35,7 @@ endif
 auth: check-deps
 	@echo "Setting up local Google Cloud credentials for project: $(GCP_PROJECT_ID)"
 	@mkdir -p $(ADC_DIR)
-	CLOUDSDK_CONFIG=$(ADC_DIR) gcloud auth application-default login
+	CLOUDSDK_CONFIG=$(ADC_DIR) gcloud auth application-default login --scopes=https://www.googleapis.com/auth/cloud-platform --project $(GCP_PROJECT_ID)
 	@echo "Setting quota project to $(GCP_PROJECT_ID)..."
 	CLOUDSDK_CONFIG=$(ADC_DIR) gcloud auth application-default set-quota-project $(GCP_PROJECT_ID)
 
