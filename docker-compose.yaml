@@ -1,1 +1,33 @@
 # docker-compose
+services:
+
+  # FRONTEND SERVICE
+
+  # THE REDIS STORAGE 
+  redis-store:
+    image: redis:7.4-alpine
+    container_name: redis_storage
+    ports:
+      - "6379:6379"
+    # Essential for persistent data testing
+    volumes:
+      - redis_data:/data
+
+  # GO BACKEND
+  backend-api:
+    build:
+      context: ./backend      # Look in the backend folder
+      dockerfile: Dockerfile  # Use your Multi-Stage Dockerfile
+    container_name: go_backend
+    environment:
+      - APP_ENV=development
+    volumes:
+      # Injects the JSON ADC file into the Linux OS
+      - ./backend/local_config.adc:/app/config.adc:ro
+    depends_on:
+      - redis-store
+    ports:
+      - "8080:8080"
+
+volumes:
+  redis_data:
