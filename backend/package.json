@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Package for Backend of Darya Project",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Daria-Open-Source/app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Daria-Open-Source/app/issues"
+  },
+  "homepage": "https://github.com/Daria-Open-Source/app#readme"
+}

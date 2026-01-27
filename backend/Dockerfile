@@ -1,11 +1,18 @@
-FROM golang:1.24-bookworm AS builder
+# Stage 1: Build
+FROM node:20-alpine AS builder 
 WORKDIR /app
-COPY go.mod ./
-RUN go mod download
+COPY package*.json ./
+RUN npm install
 COPY . .
-RUN go build -o main ./src/main.go
 
-FROM alpine:latest
+# Stage 2: Final Runtime
+FROM node:20-alpine 
 WORKDIR /app
-COPY --from=builder /app/main .
-CMD ["./main"]
+
+# 1. Copy the production dependencies from the builder
+COPY --from=builder /app/node_modules ./node_modules
+# 2. Copy your actual code (from the src folder based on your file tree)
+COPY --from=builder /app/src/index.js . 
+
+EXPOSE 3000
+CMD ["node", "index.js"]

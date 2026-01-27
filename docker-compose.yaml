@@ -18,7 +18,8 @@ services:
     build:
       context: ./backend      # Look in the backend folder
       dockerfile: Dockerfile  # Use your Multi-Stage Dockerfile
-    container_name: go_backend
+    container_name: Darya_backend_express
+    image: darya_backend_av
     environment:
       - APP_ENV=development
     volumes:
@@ -27,7 +28,7 @@ services:
     depends_on:
       - redis-store
     ports:
-      - "8080:8080"
+      - "3000:3000"
 
 volumes:
   redis_data:
