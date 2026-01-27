@@ -1,3 +1,6 @@
+# Add this to the very top of your Makefile
+SHELL := /bin/bash
+
 # Load environment variables from .env file
 # The "-" before include tells Make to ignore it if the file doesn't exist
 -include .env
@@ -33,15 +36,21 @@ endif
 	@echo "✅ All dependencies (gcloud & docker) are verified."
 
 auth: check-deps
-	@echo "Setting up local Google Cloud credentials for project: $(GCP_PROJECT_ID)"
-	@mkdir -p $(ADC_DIR)
-	CLOUDSDK_CONFIG=$(ADC_DIR) gcloud auth application-default login
-	@echo "Setting quota project to $(GCP_PROJECT_ID)..."
-	CLOUDSDK_CONFIG=$(ADC_DIR) gcloud auth application-default set-quota-project $(GCP_PROJECT_ID)
+	@echo "Checking for valid Google Cloud credentials..."
+	@CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default print-access-token > /dev/null 2>&1 || { \
+		echo "No valid credentials found. Starting browser login..."; \
+		mkdir -p "$(ADC_DIR)"; \
+		CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default login \
+			--scopes=https://www.googleapis.com/auth/cloud-platform \
+			--project $(GCP_PROJECT_ID); \
+		echo "Setting quota project to $(GCP_PROJECT_ID)..."; \
+		CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default set-quota-project $(GCP_PROJECT_ID); \
+	}
+	@echo "✅ Credentials verified for $(GCP_PROJECT_ID)."
 
-up:
+up: auth
 	@echo "Starting the application..."
-	docker-compose up --build
+	docker-compose up --build -d
 
 down:
 	docker-compose down
