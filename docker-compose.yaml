@@ -42,17 +42,16 @@ services:
     build:
       context: ./backend      # Look in the backend folder
       dockerfile: Dockerfile  # Use your Multi-Stage Dockerfile
-    container_name: Darya_backend_express
-    image: darya_backend_av
+    container_name: daria_backend
+    image: daria_backend
     environment:
       - APP_ENV=development
     volumes:
-      # Injects the JSON ADC file into the Linux OS
-      - ./backend/local_config.adc:/app/config.adc:ro
+      - ./application_default_credentials.json:/app/gcloud_config/application_default_credentials.json
     depends_on:
       - redis-store
     ports:
-      - "3000:3000"
+      - "8000:8000"
 
 volumes:
   redis_data:
