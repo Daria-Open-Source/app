@@ -1,3 +1,4 @@
+# docker-compose
 services:
 
   #Frontend service
@@ -25,3 +26,32 @@ services:
   #   volumes:
   #     - ./backend:/app
   #   command: uvicorn main:app --host
+
+  # THE REDIS STORAGE 
+  redis-store:
+    image: redis:7.4-alpine
+    container_name: redis_storage
+    ports:
+      - "6379:6379"
+    # Essential for persistent data testing
+    volumes:
+      - redis_data:/data
+
+  # GO BACKEND
+  backend-api:
+    build:
+      context: ./backend      # Look in the backend folder
+      dockerfile: Dockerfile  # Use your Multi-Stage Dockerfile
+    container_name: daria_backend
+    image: daria_backend
+    environment:
+      - APP_ENV=development
+    volumes:
+      - ./application_default_credentials.json:/app/gcloud_config/application_default_credentials.json
+    depends_on:
+      - redis-store
+    ports:
+      - "8000:8000"
+
+volumes:
+  redis_data:
