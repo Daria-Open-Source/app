@@ -10,8 +10,7 @@ dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 
 // Use process.env for the terminal test
 const env = process.env;
-console.log("🛠️ API Key:", process.env.VITE_FIREBASE_API_KEY?.substring(0, 10) + "...");
-console.log("🛠️ Project ID:", process.env.VITE_FIREBASE_PROJECT_ID);
+
 //Create config
 const firebaseConfig: FirebaseOptions = {
   apiKey: env.VITE_FIREBASE_API_KEY,

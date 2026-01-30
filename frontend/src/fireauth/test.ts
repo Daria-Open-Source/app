@@ -1,6 +1,6 @@
 //src/fireauth/test.ts
 import { loginUser, registerUser } from "./authservice";
-import { db } from "./config"; // Ensure db is exported from your config
+import { db } from "./config";
 import { doc, getDoc } from "firebase/firestore"; 
 
 const runFullAuthFlow = async () => {
