@@ -1,7 +1,7 @@
 # Stage 1: Build
 FROM node:24-alpine AS builder 
 WORKDIR /app
-COPY package*.json ./
+COPY src/package*.json ./
 RUN npm ci
 COPY . .
 
