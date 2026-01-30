@@ -1,6 +1,7 @@
 //src/fireauth/config.ts
 import { initializeApp, type FirebaseApp, type FirebaseOptions} from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore"; 
 import dotenv from "dotenv";
 import path from "path";
 
@@ -27,3 +28,6 @@ export const app: FirebaseApp = initializeApp(firebaseConfig);
 
 //Export the auth service for use in authService.ts
 export const auth: Auth = getAuth(app);
+
+//Get firestore db
+export const db : Firestore = getFirestore(app); 
