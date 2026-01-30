@@ -2,8 +2,8 @@ import PipeTemplate from './template.js';
 
 export class PipeA extends PipeTemplate {
 
-    constructor(pipeType) {
-        super(pipeType);
+    constructor(pipeConfig) {
+        super(pipeConfig);
     }
 
     process(unprocessed) {
@@ -14,8 +14,8 @@ export class PipeA extends PipeTemplate {
 
 export class PipeB extends PipeTemplate {
 
-    constructor(pipeType) {
-        super(pipeType);
+    constructor(pipeConfig) {
+        super(pipeConfig);
     }
 
     process(unprocessed) {
@@ -26,8 +26,8 @@ export class PipeB extends PipeTemplate {
 
 export class PipeC extends PipeTemplate {
 
-    constructor(pipeType) {
-        super(pipeType);
+    constructor(pipeConfig) {
+        super(pipeConfig);
     }
 
     process(unprocessed) {
