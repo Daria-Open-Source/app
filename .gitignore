@@ -1,7 +1,12 @@
 # gitignore
+
+# security ignors
 .env
 .gcloud_config/
+
+# package ignores
 node_modules/
+.vscode
 
 # Logs
 logs

@@ -34,6 +34,8 @@ class BigQueryWrapper {
      * @returns {boolean}   - what the function returns
      */
     async isConnected() { 
+        
+        console.log('expecting adc at ' + process.env.GOOGLE_APPLICATION_CREDENTIALS);
         try {
             
             // simple API call
