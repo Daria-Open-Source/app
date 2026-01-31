@@ -1,0 +1,12 @@
+import { bq } from './bigquery.js';
+
+describe('BigQuery Wrapper Tests', () => {
+    
+    // tests BigQuery connection
+    it('Should connect to the BigQuery API', async () => {
+
+        const bqResponse = await bq.isConnected();
+        // service should auto-connect
+        expect(bqResponse).toBeTruthy();
+    });
+});
