@@ -1,6 +1,6 @@
 import { bq } from './bigquery.js';
 
-describe('BigQuery Wrapper Tests', () => {
+describe('BigQuery Unit Tests', () => {
     
     // tests BigQuery connection
     it('Should connect to the BigQuery API', async () => {

@@ -1,34 +1,26 @@
-# Stage 1: Build
-FROM node:24-alpine AS builder 
+# These edits add a test build to the container,
+# and will run unit tests inside the container
+# If the tests pass, it is built again w/ out the tests.
 
-# Defines a directory to work from
+# Stage 1: Build Image
+FROM node:24-alpine AS builder
 WORKDIR /app
-
-# Used to clean install dependencies
 COPY package*.json ./
-
-# Installs dependencies
 RUN npm ci
 
-# Copy everything into the container
+# Stage 2: Unit Tests
+FROM builder AS tester
 COPY . .
+RUN npm run test:unit
 
-# Stage 2: Final Runtime
+# Stage 3: Production Image
 FROM node:24-alpine
 
-# Defines a work directory
 WORKDIR /app
-
-# package.json indicates the project is a module
 COPY --from=builder /app/package.json ./
-
-# Copies the node modules from the previous container
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=tester /app/src ./src
 
-# Copies the code
-COPY --from=builder /app/src ./src
-
-# Port the container exposes for connections
 EXPOSE 8000
 
 # Run the node command pointing to the src folder
