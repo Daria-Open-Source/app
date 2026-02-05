@@ -1,4 +1,4 @@
-import { bq } from './bigquery.js';
+import { bq } from './service.js';
 
 describe('BigQuery Unit Tests', () => {
     
