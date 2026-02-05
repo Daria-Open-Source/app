@@ -1,61 +1,39 @@
-# Add this to the very top of your Makefile
 SHELL := /bin/bash
 
-# Load environment variables from .env file
-# The "-" before include tells Make to ignore it if the file doesn't exist
--include .env
+# Load environment variables
+-include backend/.env
 export
 
-# Variables
-ADC_DIR = $(shell pwd)/.gcloud_config
-GCLOUD_BIN := $(shell command -v gcloud 2> /dev/null)
-DOCKER_BIN := $(shell command -v docker 2> /dev/null)
+# Variables - Localized to the backend folder for Docker access
+ADC_DIR = $(CURDIR)/backend/.gcloud_config
+GCP_PROJECT_ID ?= $(shell grep GCP_PROJECT_ID backend/.env | cut -d '=' -f2)
 
 .PHONY: all auth up down clean check-deps
 
-# Default target when you just type 'make'
-all: check-deps auth up
-
-# --- Dependency Checks ---
+all: auth up
 
 check-deps:
-# 1. check for google cloud cli
-ifndef GCLOUD_BIN
-	$(error "ERROR: 'gcloud' is not installed. Install it here: https://cloud.google.com/sdk/docs/install")
-endif
-# 2. check for docker cli
-ifndef DOCKER_BIN
-	$(error "ERROR: 'docker' is not installed. Install it here: https://www.docker.com/products/docker-desktop/")
-endif
-# 3. check for project id in .env
-ifndef GCP_PROJECT_ID
-	$(error "ERROR: PROJECT_ID is not set. Please check your .env for a PROJECT_ID=your-id")
-endif
-# 4. check that docker is running
-	@docker info > /dev/null 2>&1 || (echo "ERROR: Docker is installed but not running. Please start Docker Desktop."; exit 1)
-	@echo "✅ All dependencies (gcloud & docker) are verified."
+	@command -v gcloud >/dev/null 2>&1 || { echo "❌ gcloud not found"; exit 1; }
+	@command -v docker >/dev/null 2>&1 || { echo "❌ docker not found"; exit 1; }
+	@docker info >/dev/null 2>&1 || { echo "❌ docker not running"; exit 1; }
+	@[ -z "$(GCP_PROJECT_ID)" ] && { echo "❌ GCP_PROJECT_ID missing in backend/.env"; exit 1; } || true
 
 auth: check-deps
-	@echo "Checking for valid Google Cloud credentials..."
-	@CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default print-access-token > /dev/null 2>&1 || { \
-		echo "No valid credentials found. Starting browser login..."; \
-		mkdir -p "$(ADC_DIR)"; \
-		CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default login \
-			--scopes=https://www.googleapis.com/auth/cloud-platform \
-			--project $(GCP_PROJECT_ID); \
-		echo "Setting quota project to $(GCP_PROJECT_ID)..."; \
-		CLOUDSDK_CONFIG="$(ADC_DIR)" "$(GCLOUD_BIN)" auth application-default set-quota-project $(GCP_PROJECT_ID); \
+	@echo "Checking credentials in $(ADC_DIR)..."
+	@mkdir -p "$(ADC_DIR)"
+	@CLOUDSDK_CONFIG="$(ADC_DIR)" gcloud auth application-default print-access-token > /dev/null 2>&1 || { \
+		echo "Authenticating..."; \
+		CLOUDSDK_CONFIG="$(ADC_DIR)" gcloud auth application-default login --project $(GCP_PROJECT_ID); \
+		CLOUDSDK_CONFIG="$(ADC_DIR)" gcloud auth application-default set-quota-project $(GCP_PROJECT_ID); \
 	}
-	@echo "✅ Credentials verified for $(GCP_PROJECT_ID)."
+	@echo "✅ Credentials ready."
 
-up: auth
-	@echo "Starting the application..."
+up:
 	docker-compose up --build -d
 
 down:
 	docker-compose down
 
 clean:
-	@echo "Cleaning up credentials and docker artifacts..."
-	rm -rf $(ADC_DIR)
-	docker-compose down --rmi local --volumes --remove-orphans
+	rm -rf backend/.gcloud_config
+	docker-compose down --rmi local -v
