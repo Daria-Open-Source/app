@@ -12,16 +12,18 @@ function setupEnv() {
     dotenv.config({ 
         path: path.resolve(BACKEND_DIR, '.env') 
     });
-    
+
     return (process.env.GOOGLE_APPLICATION_CREDENTIALS != undefined);
 }
 
 async function runDocker() {
     
+    console.log(process.env.DEBUG);
     let testContainer;
     console.log('building the container');
     try {
         const containerBuilder = await GenericContainer.fromDockerfile(BACKEND_DIR)
+            .withCache(false)
             .build();
             
         // builds container with specs

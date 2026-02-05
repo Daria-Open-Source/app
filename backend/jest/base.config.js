@@ -1,5 +1,6 @@
 export default {
     transform: {},
     verbose: true,
-    rootDir: '../'
+    rootDir: '../',
+    testEnvironment: 'node'
 };

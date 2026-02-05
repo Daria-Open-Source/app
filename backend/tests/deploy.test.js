@@ -8,4 +8,4 @@ describe('Test deploying the app', () => {
         expect(response.status).toBe(200);
         expect(response.body.msg).toBe('Hello World!');
     });
-})
+});
