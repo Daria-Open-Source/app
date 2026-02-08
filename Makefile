@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 # Load environment variables
 -include backend/.env
+-include frontend/.env
 export
 
 # Variables - Localized to the backend folder for Docker access
@@ -35,5 +36,8 @@ down:
 	docker-compose down
 
 clean:
+	rm -rf backend/node_modules
+	rm -rf frontend/node_modules
 	rm -rf backend/.gcloud_config
+	rm -rf /.gcloud_config
 	docker-compose down --rmi local -v
