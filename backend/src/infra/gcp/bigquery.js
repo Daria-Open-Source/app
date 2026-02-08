@@ -96,4 +96,5 @@ class BigQueryWrapper {
 
 
 // node will only export a single instance of this class
-export const bq = new BigQueryWrapper(5);
+const bigQuery = new BigQueryWrapper(5);
+export default bigQuery;
