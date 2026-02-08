@@ -33,20 +33,13 @@ class BigQueryWrapper {
      * Function description
      * @returns {boolean}   - what the function returns
      */
-    async isConnected() { 
-        try {
-            
-            // simple API call
-            const [datasets] = await this.#client.getDatasets();
-            if (datasets != null)
-                return true;
-            return false;
-        } catch (err) {
-            
-            // TODO: replace with a custom error 
-            console.log(err);
-            return false;
-        }
+    isConnected() { 
+        
+        this.#client.getDatasets()
+        .then(
+            response => { return ((response != null) && (response != undefined)); },
+            failure => { console.log(failure); return false; }
+        );
     }
 
     /**
