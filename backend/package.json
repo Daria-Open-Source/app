@@ -4,14 +4,30 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test:integration",
+    "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest/unit.config.js",
+    "test:integration": "cross-env DEBUG=testcontainers:build node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest/int.config.js",
+    "dev": "nodemon --experimental-vm-modules src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@google-cloud/bigquery": "^8.1.1",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "firebase-admin": "^13.6.0"
+    "jest": "^30.2.0",
+    "path": "^0.12.7",
+    "supertest": "^7.2.2",
+    "testcontainers": "^11.11.0",
+    "url": "^0.11.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.6",
+    "@babel/preset-env": "^7.28.6",
+    "babel-jest": "^30.2.0",
+    "nodemon": "^3.1.11"
   }
 }

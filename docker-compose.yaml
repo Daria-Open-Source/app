@@ -13,19 +13,12 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    env_file:
+      - ./frontend/.env
     #cmmand: npx vite --host 0.0.0.0 --port 3000    
     
     # depends_on:
     #   - backend
-
-  # #Backend service
-  # backend:
-  #   build: ./backend
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - ./backend:/app
-  #   command: uvicorn main:app --host
 
   # THE REDIS STORAGE 
   redis-store:
@@ -37,21 +30,26 @@ services:
     volumes:
       - redis_data:/data
 
-  # GO BACKEND
-  backend-api:
+  # NODE BACKEND
+  backend:
     build:
       context: ./backend      # Look in the backend folder
       dockerfile: Dockerfile  # Use your Multi-Stage Dockerfile
-    container_name: daria_backend
-    image: daria_backend
-    environment:
-      - APP_ENV=development
+    container_name: daria-backend
+    image: daria-backend
     volumes:
-      - ./application_default_credentials.json:/app/gcloud_config/application_default_credentials.json
+      - ./backend:/app    # tells docker to 'stream' code from /backend
+      - /app/node_modules # tells docker to use the node_modules built by the container
+      - ./.gcloud_config/application_default_credentials.json:/app/.gcloud_config/credentials.json:ro # injects the crendential (was ignored before)
+    environment:
+    - APP_ENV=development
+    - GOOGLE_APPLICATION_CREDENTIALS=/app/.gcloud_config/credentials.json # Overrides the env path, which is dev-specific
     depends_on:
       - redis-store
     ports:
       - "8000:8000"
-
+    env_file:
+      - ./backend/.env
+  
 volumes:
   redis_data:
