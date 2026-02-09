@@ -33,22 +33,13 @@ class BigQueryWrapper {
      * Function description
      * @returns {boolean}   - what the function returns
      */
-    async isConnected() { 
+    isConnected() { 
         
-        console.log('expecting adc at ' + process.env.GOOGLE_APPLICATION_CREDENTIALS);
-        try {
-            
-            // simple API call
-            const [datasets] = await this.#client.getDatasets();
-            if (datasets != null)
-                return true;
-            return false;
-        } catch (err) {
-            
-            // TODO: replace with a custom error 
-            console.log(err);
-            return false;
-        }
+        this.#client.getDatasets()
+        .then(
+            response => { return ((response != null) && (response != undefined)); },
+            failure => { console.log(failure); return false; }
+        );
     }
 
     /**
@@ -98,4 +89,5 @@ class BigQueryWrapper {
 
 
 // node will only export a single instance of this class
-export const bq = new BigQueryWrapper(5);
+const bigQuery = new BigQueryWrapper(5);
+export default bigQuery;
