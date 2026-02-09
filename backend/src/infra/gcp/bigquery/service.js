@@ -34,17 +34,12 @@ class BigQueryWrapper {
      * @returns {boolean}   - what the function returns
      */
     async isConnected() { 
+        
         try {
-            
-            // simple API call
             const [datasets] = await this.#client.getDatasets();
-            if (datasets != null)
-                return true;
-            return false;
-        } catch (err) {
-            
-            // TODO: replace with a custom error 
-            console.log(err);
+            return ((datasets != null) && (datasets != undefined));
+        } catch (error) {
+            console.log(error);
             return false;
         }
     }
@@ -96,4 +91,5 @@ class BigQueryWrapper {
 
 
 // node will only export a single instance of this class
-export const bq = new BigQueryWrapper(5);
+const bigQuery = new BigQueryWrapper(5);
+export default bigQuery;
