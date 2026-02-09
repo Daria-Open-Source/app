@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import * as controller from './controller.js';
 
-let usersRouter = Router();
+const usersRouter = Router();
 
 usersRouter.get('/', 
-    controller.getAllUsers,    
+    controller.getAllUsers
 );
 
 usersRouter.get('/:id', 
@@ -15,11 +15,11 @@ usersRouter.post('/',
     controller.makeUser
 );
 
-usersRouter.put('/',
+usersRouter.put('/:id',
     controller.updateUser
 );
 
-usersRouter.delete('/',
+usersRouter.delete('/:id',
     controller.deleteUser
 );
 
