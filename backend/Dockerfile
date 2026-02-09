@@ -1,17 +1,27 @@
-# Stage 1: Build
-FROM node:24-alpine AS builder 
-WORKDIR /app
-COPY src/package*.json ./
-RUN npm ci
-COPY . .
+# These edits add a test build to the container,
+# and will run unit tests inside the container
+# If the tests pass, it is built again w/ out the tests.
 
-# Stage 2: Final Runtime
-FROM node:24-alpine
+# Stage 1: Build Image
+FROM node:24-alpine AS builder
 WORKDIR /app
-# 2. Copy the entire src folder from the builder stage
+COPY package*.json ./
+RUN npm ci
+
+# Stage 2: Unit Tests
+FROM builder AS tester
+COPY . .
+RUN npm run test:unit
+
+# Stage 3: Production Image
+FROM node:24-alpine
+
+WORKDIR /app
+COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
-# Copy the src folder itself, not just its contents
-COPY --from=builder /app/src ./src
+COPY --from=tester /app/src ./src
+
 EXPOSE 8000
+
 # Run the node command pointing to the src folder
 CMD ["node", "src/index.js"]
