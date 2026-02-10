@@ -1,13 +1,23 @@
-//src/firestore/config.js
-import admin from "firebase-admin";
+//src/infra/gcp/firestore/config.js
+import admin  from "firebase-admin";
 import dotenv from "dotenv";
 import path from "path";
 
+//Resolve path
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 
+if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = path.resolve(
+        process.cwd(), 
+        process.env.GOOGLE_APPLICATION_CREDENTIALS
+    );
+} 
+
 if (!admin.apps.length) {
+    //Initialize app
     admin.initializeApp({
-        projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+        credential: admin.credential.applicationDefault(),
+        projectId: process.env.GCP_PROJECT_ID,
     });
 }
 
