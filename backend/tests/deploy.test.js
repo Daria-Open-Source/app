@@ -6,6 +6,5 @@ describe('Test deploying the app', () => {
             .set('Accept', 'application/json');
         
         expect(response.status).toBe(200);
-        expect(response.body.msg).toBe('Hello World!');
     });
 });

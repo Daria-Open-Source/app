@@ -6,6 +6,8 @@ const PORT = process.env.PORT || 8000;
 const allGood = await allServicesConnected();
 
 if (allGood)
-    app.listen(PORT, () => console.log(`Server is online at port ${PORT}`));
-else
+    app.listen(PORT, '0.0.0.0', () => console.log(`Server is online at port ${PORT}`));
+else {
+    console.error("Dependency check failed. Exiting.");
     process.exit(1);
+}
