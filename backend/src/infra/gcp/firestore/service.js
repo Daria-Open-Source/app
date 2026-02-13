@@ -18,6 +18,7 @@ class FirestoreWrapper {
         }
     }
 
+    //Allows to query any table based on table name, returns list of different documents
     async queryCollection(name) {
         const snapshot = await this.#db.collection(name).limit(10).get();
         return snapshot.docs.map(doc => doc.data());

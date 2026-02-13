@@ -13,6 +13,7 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     );
 } 
 
+//If firebase instance is not up, initialize app
 if (!admin.apps.length) {
     //Initialize app
     admin.initializeApp({
@@ -21,5 +22,6 @@ if (!admin.apps.length) {
     });
 }
 
+//Export db/auth for use in service
 export const db = admin.firestore();
 export const auth = admin.auth();
