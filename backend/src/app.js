@@ -1,6 +1,10 @@
 import express from 'express';
+import usersRouter from './domains/users/router.js';
 
 const app = express();
+
+// implements a usersRouter
+app.use('/api/users', usersRouter);
 
 app.get('/ping', (req, res) => {
     return res.status(200).json({ msg: 'pinged' });

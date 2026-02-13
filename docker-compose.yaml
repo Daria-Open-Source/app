@@ -43,7 +43,6 @@ services:
       - ./.gcloud_config/application_default_credentials.json:/app/.gcloud_config/credentials.json:ro # injects the crendential (was ignored before)
     environment:
     - APP_ENV=development
-    - GOOGLE_APPLICATION_CREDENTIALS=/app/.gcloud_config/credentials.json # Overrides the env path, which is dev-specific
     depends_on:
       - redis-store
     ports:
