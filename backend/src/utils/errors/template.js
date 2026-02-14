@@ -1,10 +1,14 @@
 class AppError extends Error {
     isOperational;
+    statusCode;
 
-    constructor(message, isOperational = true) {
+    constructor(message, statusCode, isOperational = true) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
+        
         this.isOperational = isOperational;
+        this.statusCode = statusCode;
+        
         Error.captureStackTrace(this, this.constructor);
   }
 }
