@@ -18,18 +18,33 @@ function setupEnv() {
 
 async function runDocker() {
     
-    console.log(process.env.DEBUG);
     let testContainer;
     console.log('building the container');
     try {
         const containerBuilder = await GenericContainer.fromDockerfile(BACKEND_DIR)
             .withCache(false)
             .build();
-            
+        
+        containerBuilder.withLogConsumer((stream) => {
+            stream.on("data", line => console.log(`[CONTAINER]: ${line}`));
+            stream.on("err", line => console.error(`[CONTAINER-ERR]: ${line}`));
+        });
+
         // builds container with specs
         testContainer = await containerBuilder
             .withExposedPorts(8000)
-            .withWaitStrategy(Wait.forLogMessage(/Server running on port 8000/))
+            .withBindMounts([
+                {
+                    source: path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+                    target: "/app/google-credentials.json",
+                    mode: "ro",
+                },
+            ])
+            .withEnvironment({
+                GOOGLE_APPLICATION_CREDENTIALS: "/app/google-credentials.json",
+                GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT
+            })
+            .withWaitStrategy(Wait.forHttp("/", 8000))
             .start();
     }
     catch (error) {
