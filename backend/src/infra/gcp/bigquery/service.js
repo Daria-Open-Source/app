@@ -1,4 +1,5 @@
 import { BigQuery } from '@google-cloud/bigquery';
+import * as ErrorSystem from './../../../utils/errors/errors'
 
 class BigQueryWrapper {
     
@@ -16,7 +17,7 @@ class BigQueryWrapper {
         this.#budgetGb = gbBudget;
     
         if (!this.#client)
-            throw new Error('Could not connect to BigQuery')
+            throw new ErrorSystem.BigQueryError('Could not connect to BigQuery');
     };
 
     /**
