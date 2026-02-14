@@ -1,7 +1,7 @@
 import {
     WebError,
     InfraError,
-    ServiceError,
+    DomainError,
     DataError
 } from './template.js';
 
